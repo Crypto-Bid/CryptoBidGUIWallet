@@ -857,9 +857,9 @@ html ="""
                     errors.push("Address is required!");
                     $('#send_address').parent().addClass('has-error');
                 }
-                else if(!((address.substr(0, 4) == "Sumo" && address.length == 99) || 
-                    (address.substr(0, 4) == "Sumi"  && address.length == 110) || 
-                    (address.substr(0, 4) == "Subo"  && address.length == 98)))
+                else if(!((address.substr(0, 4) == "bidt" && address.length == 99) || 
+                    (address.substr(0, 4) == "bitd"  && address.length == 110) || 
+                    (address.substr(0, 4) == "bitu"  && address.length == 98)))
                 {
                     errors.push("Address is not valid!");
                     $('#send_address').parent().addClass('has-error');
@@ -1181,8 +1181,8 @@ html ="""
                                 <h5><i class="fa fa-fw fa-unlock"></i> Unlocked Balance:</h5>
                             </div>
                             <div class="col-xs-6" style="text-align:right">
-                                <h5><span id="balance">0.000000000</span> <small>SUMO</small> <span class="syncing"> (syncing)</span></h5>
-                                <h5><span id="unlocked_balance">0.000000000</span> <small>SUMO</small> <span class="syncing"> (syncing)</span></h5>
+                                <h5><span id="balance">0.000000000</span> <small>BID</small> <span class="syncing"> (syncing)</span></h5>
+                                <h5><span id="unlocked_balance">0.000000000</span> <small>BID</small> <span class="syncing"> (syncing)</span></h5>
                             </div>
                             <div class="col-xs-12" style="margin-top: 10px">
                                 <button id="btn_rescan_spent" type="button" class="btn btn-primary" onclick="rescan_spent()" disabled><i class="fa fa-sort-amount-desc"></i> Rescan Spent</button>
