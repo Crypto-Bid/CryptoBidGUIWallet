@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-## Copyright (c) 2017-2018, The Sumokoin Project (www.sumokoin.org)
+## Copyright (c) 2017-2018, The koin Project (www.sumokoin.org)
 '''
 App UIs
 '''
@@ -33,7 +33,7 @@ MSG_TYPE_INFO = 1
 MSG_TYPE_WARNING = 2
 MSG_TYPE_CRITICAL = 3
 
-from manager.ProcessManager import SumokoindManager, WalletRPCManager
+from manager.ProcessManager import cryptobiddManager, WalletRPCManager
 from rpc import RPCRequest, DaemonRPCRequest
 
 from classes import AppSettings, WalletInfo
@@ -200,7 +200,7 @@ class MainWebUI(BaseWebUI):
         
         self.app.aboutToQuit.connect(self._handleAboutToQuit)
         
-        self.sumokoind_daemon_manager = None
+        self.cryptobidd_daemon_manager = None
         self.wallet_cli_manager = None
         self.wallet_rpc_manager = None
         
@@ -276,11 +276,11 @@ class MainWebUI(BaseWebUI):
     
     def start_deamon(self):
         #start sumokoind daemon
-        self.sumokoind_daemon_manager = SumokoindManager(self.app.property("ResPath"), 
+        self.cryptobidd_daemon_manager = cryptobiddManager(self.app.property("ResPath"), 
                                             self.app_settings.settings['daemon']['log_level'], 
                                             self.app_settings.settings['daemon']['block_sync_size'])
         
-        self.sumokoind_daemon_manager.start()
+        self.cryptobidd_daemon_manager.start()
         
         
     def show_wallet(self):
@@ -308,8 +308,8 @@ class MainWebUI(BaseWebUI):
         
         while True:
             self.hub.app_process_events()
-            sumokoind_info = self.daemon_rpc_request.get_info()
-            if sumokoind_info['status'] == "OK":
+            cryptobidd_info = self.daemon_rpc_request.get_info()
+            if cryptobidd_info['status'] == "OK":
                 self.wallet_rpc_manager = WalletRPCManager(self.app.property("ResPath"), \
                                                 self.wallet_info.wallet_filepath, \
                                                 wallet_password, \
@@ -319,17 +319,17 @@ class MainWebUI(BaseWebUI):
         
     def _update_daemon_status(self):
         target_height = 0
-        sumokoind_info = self.daemon_rpc_request.get_info()
-        if sumokoind_info['status'] == "OK":
+        cryptobidd_info = self.daemon_rpc_request.get_info()
+        if cryptobidd_info['status'] == "OK":
             status = "Connected"
-            self.current_height = int(sumokoind_info['height'])
-            target_height = int(sumokoind_info['target_height'])
+            self.current_height = int(cryptobidd_info['height'])
+            target_height = int(cryptobidd_info['target_height'])
             if target_height == 0 or target_height < self.current_height:
                 target_height = self.current_height
             if self.target_height < target_height:
                 self.target_height = target_height;
         else:
-            status = sumokoind_info['status']
+            status = cryptobidd_info['status']
         
         info = {"status": status, 
                 "current_height": self.current_height, 
@@ -338,8 +338,8 @@ class MainWebUI(BaseWebUI):
         
         self.hub.update_daemon_status(json.dumps(info))
         
-        sync_status = "Disconnected" if sumokoind_info['status'] != "OK" else "Synchronizing..."
-        if sumokoind_info['status'] == "OK" and self.current_height == self.target_height:
+        sync_status = "Disconnected" if cryptobidd_info['status'] != "OK" else "Synchronizing..."
+        if cryptobidd_info['status'] == "OK" and self.current_height == self.target_height:
             sync_status = "Network synchronized"
         
         self.trayIcon.setToolTip("%s\n%s (%d/%d)" % (tray_icon_tooltip, sync_status,
@@ -506,7 +506,7 @@ class MainWebUI(BaseWebUI):
         
     def about(self):
         QMessageBox.about(self, "About", \
-            u"%s <br><br>Copyright© 2017 -2018 - Sumokoin Projects (www.sumokoin.org)" % self.agent)
+            u"%s <br><br>Copyright© 2017 -2018 - cryptobid Projects " % self.agent)
     
     def _load_wallet(self):
         if self.wallet_info.load():
@@ -594,8 +594,8 @@ class MainWebUI(BaseWebUI):
             self.timer2.stop()
         if self.wallet_rpc_manager is not None:
             self.wallet_rpc_manager.stop()
-        if self.sumokoind_daemon_manager is not None:
-            self.sumokoind_daemon_manager.stop()
+        if self.cryptobidd_daemon_manager is not None:
+            self.cryptobidd_daemon_manager.stop()
         
         self.app_settings.settings['blockchain']['height'] = self.target_height
         self.app_settings.save()
